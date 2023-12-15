@@ -15,7 +15,8 @@ namespace hvi
 {
 
 Window::Window(std::string&& title, const u32 width, const u32 height) : title(std::move(title)),
-    width(width), height(height), renderWindow(sf::VideoMode(width, height), title.c_str()),
+    width(width), height(height), doExit(false),
+    renderWindow(sf::VideoMode(width, height), title.c_str()),
     view(0, 0), currentBuffer(nullptr), cursor(nullptr), cmdBar(nullptr), mode(EnumMode::NORMAL), uiMap()
 {
     init();
@@ -68,30 +69,15 @@ void Window::launch()
 {
     [[maybe_unused]]
     static Logger& logger = Logger::stdlogger();
-    const std::size_t defaultCapacity = 1024;
     const std::string filepath = "file.txt";
-    buffers.push_back(std::make_unique<Buffer>(defaultCapacity));
-    currentBuffer = buffers.back().get();
 
-    try
-    {
-        currentBuffer->load(filepath);
-    }
-
-    catch (const std::runtime_error& e)
-    {
-        std::ostringstream os;
-        os << "Caught an exception while loading the current Window (" << e.what() << ").";
-        logger.write(LogLevel::ERROR, os.str());
-        logger.endl();
-
-        currentBuffer->clear();
-    }
+    currentBuffer = Buffer::staticLoad(filepath);
+    buffers.push_back(std::unique_ptr<Buffer>(currentBuffer));
 
     cursor = std::make_unique<Cursor>(*this, currentBuffer->getCharacterSize());
     cmdBar = std::make_unique<CommandBar>(*this, currentBuffer->getCharacterSize(), true);
 
-    while (renderWindow.isOpen())
+    while (renderWindow.isOpen() && !doExit)
     {
         sf::Event event;
         while (renderWindow.pollEvent(event))
@@ -129,6 +115,11 @@ void Window::exit(const u32 exitCode)
     std::cout << "Exit code: " << exitCode << std::endl;
 
     renderWindow.close();
+}
+
+void Window::prepareExit()
+{
+    doExit = true;
 }
 
 void Window::registerHandler(const EnumMode mode, const sf::Keyboard::Key key,

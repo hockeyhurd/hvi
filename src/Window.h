@@ -20,6 +20,7 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
+#include <atomic>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -73,6 +74,7 @@ public:
 
     void launch();
     void exit(const u32 errorCode = 0);
+    void prepareExit();
 
     void registerHandler(const EnumMode mode, const sf::Keyboard::Key key,
                          UserInput::Handler handler, const bool debounce);
@@ -96,6 +98,7 @@ private:
     std::string title;
     u32 width;
     u32 height;
+    std::atomic_bool doExit;
 
     sf::RenderWindow renderWindow;
     UPS ups;

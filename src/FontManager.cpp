@@ -18,6 +18,11 @@ namespace hvi
         return inst;
     }
 
+    bool FontManager::isLoaded() const noexcept
+    {
+        return loaded;
+    }
+
     const std::shared_ptr<sf::Font> FontManager::find(const EnumFont font) const
     {
         if (!loaded)

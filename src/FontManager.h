@@ -40,6 +40,7 @@ public:
     FontManager& operator= (FontManager&&) = default;
 
     static FontManager& instance();
+    bool isLoaded() const noexcept;
 
     const std::shared_ptr<sf::Font> find(const EnumFont font) const;
     void load();

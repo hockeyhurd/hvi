@@ -14,6 +14,10 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Window/Keyboard.hpp>
 
+#include <functional>
+#include <map>
+#include <string>
+
 namespace sf
 {
     class RenderWindow;
@@ -43,7 +47,11 @@ public:
 
 private:
 
+    void initCommandMap();
     bool handleEnterCommandMode(sf::Keyboard::Key key, const bool pressed);
+    bool handleCharInput(sf::Keyboard::Key keyy, const bool pressed);
+    bool handleReturnKey(sf::Keyboard::Key key, const bool pressed);
+    bool executeCommand(std::string& errorMessage);
 
 private:
 
@@ -53,6 +61,9 @@ private:
     bool doDrawText;
     sf::RectangleShape rectShape;
     sf::Text textLabel;
+    std::string textBuffer;
+
+    std::map<std::string, std::function<bool(std::string&)>> commandMap;
 };
 }
 
