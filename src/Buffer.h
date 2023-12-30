@@ -54,6 +54,7 @@ public:
     void insert(char ch);
     void insert(char ch, std::size_t pos);
     void render(sf::RenderWindow& window) const;
+    std::size_t search(const std::string& text, std::size_t startPos) const;
     void sync();
 
 private:

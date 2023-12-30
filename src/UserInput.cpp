@@ -5,7 +5,7 @@
 
 #include "UserInput.h"
 
-#include <hclib/Logger.h>
+#include <hclib/AsyncLogger.h>
 
 namespace hvi
 {
@@ -36,7 +36,7 @@ void UserInput::registerHandler(sf::Keyboard::Key key, UserInput::Handler handle
 bool UserInput::checkForDebounce(const sf::Keyboard::Key key)
 {
     [[maybe_unused]]
-    static Logger& logger = Logger::stdlogger();
+    static AsyncLogger& logger = AsyncLogger::stdlogger();
 
     bool result = true;
     auto findResult = debouncerMap.find(key);

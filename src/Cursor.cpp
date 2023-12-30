@@ -8,7 +8,7 @@
 #include "UserInput.h"
 #include "Window.h"
 
-#include <hclib/Logger.h>
+#include <hclib/AsyncLogger.h>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
@@ -24,7 +24,7 @@ namespace hvi
     Cursor::Cursor(Window& window, const u32 characterSize) : characterSize(characterSize),
         row(0), col(0), rectShape(), accumulator(0.0F), blinked(false)
     {
-        static Logger& logger = Logger::stdlogger();
+        static AsyncLogger& logger = AsyncLogger::stdlogger();
         logger << "Character size is " << characterSize;
         logger.endl();
 

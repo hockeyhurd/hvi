@@ -2,8 +2,8 @@
 #include "Window.h"
 #include "WindowManager.h"
 
+#include <hclib/AsyncLogger.h>
 #include <hclib/Types.h>
-#include <hclib/Logger.h>
 
 #include <memory>
 
@@ -13,7 +13,7 @@ using namespace hvi;
 s32 main()
 {
     [[maybe_unused]]
-    Logger& logger = Logger::stdlogger();
+    AsyncLogger& logger = AsyncLogger::stdlogger();
     logger.setLevel(LogLevel::DEBUG);
 
     FontManager& fontMan = FontManager::instance();

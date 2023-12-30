@@ -5,7 +5,7 @@
 
 #include "Window.h"
 
-#include <hclib/Logger.h>
+#include <hclib/AsyncLogger.h>
 
 #include <SFML/Window/Event.hpp>
 
@@ -17,14 +17,16 @@ namespace hvi
 Window::Window(std::string&& title, const u32 width, const u32 height) : title(std::move(title)),
     width(width), height(height), doExit(false),
     renderWindow(sf::VideoMode(width, height), title.c_str()),
-    view(0, 0), currentBuffer(nullptr), cursor(nullptr), cmdBar(nullptr), mode(EnumMode::NORMAL), uiMap()
+    view(0, 0), currentBuffer(nullptr), cursor(nullptr), cmdBar(nullptr), normalModeHandler(nullptr),
+    mode(EnumMode::NORMAL), uiMap()
 {
     init();
 }
 
 Window::Window(const std::string& title, const u32 width, const u32 height) : title(title),
     width(width), height(height), renderWindow(sf::VideoMode(width, height), title.c_str()),
-    currentBuffer(nullptr), cursor(nullptr), cmdBar(nullptr), mode(EnumMode::NORMAL), uiMap()
+    currentBuffer(nullptr), cursor(nullptr), cmdBar(nullptr), normalModeHandler(nullptr),
+    mode(EnumMode::NORMAL), uiMap()
 {
     init();
 }
@@ -68,7 +70,7 @@ UserInput* Window::getCurrentUserInput()
 void Window::launch()
 {
     [[maybe_unused]]
-    static Logger& logger = Logger::stdlogger();
+    static AsyncLogger& logger = AsyncLogger::stdlogger();
     const std::string filepath = "file.txt";
 
     currentBuffer = Buffer::staticLoad(filepath);
@@ -76,6 +78,7 @@ void Window::launch()
 
     cursor = std::make_unique<Cursor>(*this, currentBuffer->getCharacterSize());
     cmdBar = std::make_unique<CommandBar>(*this, currentBuffer->getCharacterSize(), true);
+    normalModeHandler = std::make_unique<NormalModeHandler>(*this);
 
     while (renderWindow.isOpen() && !doExit)
     {
@@ -107,6 +110,34 @@ void Window::launch()
 
         ups.counter += ups.clock.restart();
     }
+}
+
+std::optional<std::size_t> Window::resolvePositionInBufferFromCursor() const
+{
+    // TODO: We are going with a really dumb way to find out the current position
+    // by counting the number of lines into the file we are.  In a future update,
+    // we will try to be a little smarter with this.
+    static const std::string lineDelim = "\n";
+    static constexpr std::size_t npos = static_cast<std::size_t>(-1);
+
+    const std::size_t row = cursor->getRow();
+    std::size_t curRow = 0;
+    std::size_t pos = 0;
+
+    do
+    {
+        pos = currentBuffer->search(lineDelim, pos);
+
+        if (pos == npos)
+        {
+            return std::nullopt;
+        }
+
+        ++curRow;
+    }
+    while (curRow < row);
+
+    return pos == npos ? std::nullopt : std::make_optional<std::size_t>(pos);
 }
 
 void Window::exit(const u32 exitCode)

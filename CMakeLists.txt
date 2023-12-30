@@ -16,7 +16,7 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
 add_executable(hvi src/Buffer.cpp src/CommandBar.cpp src/Cursor.cpp src/FontManager.cpp
-               src/KeyHandler.cpp src/Main.cpp
+               src/KeyHandler.cpp src/Main.cpp src/NormalModeHandler.cpp
                src/UserInput.cpp src/View.cpp src/Window.cpp src/WindowManager.cpp)
 
 target_link_libraries(hvi Threads::Threads)

@@ -6,8 +6,8 @@
 #include "Buffer.h"
 #include "FontManager.h"
 
+#include <hclib/AsyncLogger.h>
 #include <hclib/File.h>
-#include <hclib/Logger.h>
 
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -62,7 +62,7 @@ namespace hvi
     /* static */
     Buffer* Buffer::staticLoad(const std::string& filepath)
     {
-        auto& logger = Logger::stdlogger();
+        auto& logger = AsyncLogger::stdlogger();
         Buffer* buffer = nullptr;
 
         if (filepath.empty())
@@ -150,6 +150,12 @@ namespace hvi
     void Buffer::render(sf::RenderWindow& window) const
     {
         window.draw(text);
+    }
+
+    std::size_t Buffer::search(const std::string& text, std::size_t startPos) const
+    {
+        const std::size_t pos = gapBuffer.search(text, startPos);
+        return pos;
     }
 
     void Buffer::sync()

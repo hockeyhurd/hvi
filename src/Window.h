@@ -12,6 +12,7 @@
 #include "CommandBar.h"
 #include "Cursor.h"
 #include "Enums.h"
+#include "NormalModeHandler.h"
 #include "UserInput.h"
 #include "View.h"
 
@@ -22,6 +23,7 @@
 
 #include <atomic>
 #include <memory>
+#include <optional>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -71,6 +73,7 @@ public:
     Buffer* getCurrentBuffer() noexcept;
     const Buffer* getCurrentBuffer() const noexcept;
     UserInput* getCurrentUserInput();
+    std::optional<std::size_t> resolvePositionInBufferFromCursor() const;
 
     void launch();
     void exit(const u32 errorCode = 0);
@@ -108,6 +111,7 @@ private:
     std::vector<std::unique_ptr<Buffer>> buffers;
     std::unique_ptr<Cursor> cursor;
     std::unique_ptr<CommandBar> cmdBar;
+    std::unique_ptr<NormalModeHandler> normalModeHandler;
 
     EnumMode mode;
     std::unordered_map<EnumMode, UserInput> uiMap;
